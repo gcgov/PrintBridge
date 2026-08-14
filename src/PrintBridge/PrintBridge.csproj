@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>PrintBridge</RootNamespace>
+    <AssemblyName>PrintBridge</AssemblyName>
+    <ApplicationIcon>Resources\printbridge.ico</ApplicationIcon>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Kestrel + minimal APIs hosted inside the WinForms process -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- PDF rasterization: PDFtoImage (MIT) bundles PDFium (BSD-3) and SkiaSharp (MIT).
+         See THIRD-PARTY-NOTICES.md. Rendered pages are handed to System.Drawing.Printing,
+         which comes from the Windows Desktop framework reference. -->
+    <PackageReference Include="PDFtoImage" Version="5.3.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\printbridge.ico" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Resources\testpage.pdf" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>
