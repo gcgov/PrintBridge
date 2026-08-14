@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Determine version
+        id: version
+        shell: pwsh
+        run: |
+          $version = '${{ github.ref_name }}'.TrimStart('v')
+          "version=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Test
+        run: dotnet test PrintBridge.sln -c Release
+
+      - name: Publish
+        run: >
+          dotnet publish src/PrintBridge -c Release -r win-x64 --self-contained true
+          -p:Version=${{ steps.version.outputs.version }}
+          -o publish
+
+      - name: Zip portable build
+        shell: pwsh
+        run: |
+          Copy-Item README.md, THIRD-PARTY-NOTICES.md, LICENSE publish/
+          Compress-Archive -Path publish/* -DestinationPath "PrintBridge-${{ steps.version.outputs.version }}-win-x64-portable.zip"
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          choco install innosetup --no-progress -y
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer\PrintBridge.iss `
+            /DAppVersion=${{ steps.version.outputs.version }} `
+            /DPublishDir=..\publish
+          Move-Item installer\Output\PrintBridge-${{ steps.version.outputs.version }}-setup.exe .
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            PrintBridge-${{ steps.version.outputs.version }}-win-x64-portable.zip
+            PrintBridge-${{ steps.version.outputs.version }}-setup.exe
+          generate_release_notes: true

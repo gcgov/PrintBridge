@@ -1,0 +1,43 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 757 >>
+stream
+0.5 w
+72 72 468 648 re S
+BT /F1 24 Tf 72 700 Td (PrintBridge test page) Tj ET
+BT /F1 12 Tf 72 660 Td (If you can read this, PrintBridge rendered a PDF and handed it to the) Tj ET
+BT /F1 12 Tf 72 642 Td (Windows print spooler without any user interaction.) Tj ET
+BT /F1 12 Tf 72 606 Td (The frame around this text sits exactly 1 inch inside the page edges,) Tj ET
+BT /F1 12 Tf 72 588 Td (so you can check that scaling and centering came out right.) Tj ET
+BT /F1 12 Tf 72 540 Td (Queue:    the default queue configured in PrintBridge settings) Tj ET
+BT /F1 12 Tf 72 522 Td (Page:     US Letter portrait, 8.5 x 11 inches) Tj ET
+BT /F1 12 Tf 72 504 Td (Source:   tray menu - Print test page) Tj ET
+BT /F1 10 Tf 72 96 Td (Bottom edge of the 1 inch frame.) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000247 00000 n 
+0000001054 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1151
+%%EOF

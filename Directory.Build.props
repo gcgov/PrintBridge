@@ -1,0 +1,12 @@
+<Project>
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <!-- Overridden by CI at release time: dotnet publish -p:Version=x.y.z -->
+    <Version Condition="'$(Version)' == ''">0.1.0</Version>
+    <Company>PrintBridge contributors</Company>
+    <Product>PrintBridge</Product>
+    <PublishTrimmed>false</PublishTrimmed>
+  </PropertyGroup>
+</Project>
