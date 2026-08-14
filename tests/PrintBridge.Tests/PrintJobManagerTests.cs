@@ -65,13 +65,24 @@ public class PrintJobManagerTests
         var second = manager.Enqueue(Request("two"));
         var third = manager.Enqueue(Request("three"));
 
-        // Only the first job may be in flight while the executor is blocked.
-        await WaitFor(() => first.Status == PrintJobStatus.Printing, "the first job never started");
+        // Only the first job may be in flight while the executor is blocked. Wait on
+        // the executor's own record, not on the status, which is set just before it runs.
+        await WaitFor(
+            () =>
+            {
+                lock (started)
+                {
+                    return started.Count > 0;
+                }
+            },
+            "the first job never reached the executor");
+
         lock (started)
         {
             Assert.Equal(new[] { "one" }, started);
         }
 
+        Assert.Equal(PrintJobStatus.Printing, first.Status);
         Assert.Equal(PrintJobStatus.Queued, second.Status);
         Assert.Equal(PrintJobStatus.Queued, third.Status);
 

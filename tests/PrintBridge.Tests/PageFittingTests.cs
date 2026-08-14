@@ -14,12 +14,12 @@ public class PageFittingTests
     private static readonly SizeF Letter = new(612f, 792f);
 
     /// <summary>Printable area of a typical laser printer on Letter (about 0.17" hardware margins).</summary>
-    private static readonly SizeF LetterPrintable = new(816f, 1058f);
+    private static readonly RectangleF LetterPrintable = new(0f, 0f, 816f, 1058f);
 
     [Fact]
     public void APageSmallerThanTheAreaIsNotEnlarged()
     {
-        var placed = PrintService.FitCentered(Letter, new SizeF(1200f, 1500f));
+        var placed = PrintService.FitCentered(Letter, new RectangleF(0f, 0f, 1200f, 1500f));
 
         Assert.Equal(850f, placed.Width, 0.5f);
         Assert.Equal(1100f, placed.Height, 0.5f);
@@ -42,18 +42,29 @@ public class PageFittingTests
     [Fact]
     public void ThePageIsCenteredInThePrintableArea()
     {
-        var area = new SizeF(1000f, 1000f);
+        var area = new RectangleF(0f, 0f, 1000f, 1000f);
         var placed = PrintService.FitCentered(Letter, area);
 
-        Assert.Equal(area.Width - placed.Right, placed.Left, 0.5f);
-        Assert.Equal(area.Height - placed.Bottom, placed.Top, 0.5f);
+        Assert.Equal(area.Right - placed.Right, placed.Left - area.Left, 0.5f);
+        Assert.Equal(area.Bottom - placed.Bottom, placed.Top - area.Top, 0.5f);
+    }
+
+    [Fact]
+    public void APrintableAreaThatDoesNotStartAtTheOriginIsRespected()
+    {
+        var area = new RectangleF(17f, 17f, 1200f, 1500f);
+        var placed = PrintService.FitCentered(Letter, area);
+
+        Assert.Equal(17f + 175f, placed.X, 0.5f);
+        Assert.Equal(17f + 200f, placed.Y, 0.5f);
+        Assert.Equal(850f, placed.Width, 0.5f);
     }
 
     [Fact]
     public void ALandscapePageFillsALandscapeArea()
     {
-        // Landscape Letter (1100 x 850) against the printable area swapped for orientation.
-        var placed = PrintService.FitCentered(new SizeF(792f, 612f), new SizeF(1058f, 816f));
+        // Landscape Letter (1100 x 850) against the printable area for a landscape page.
+        var placed = PrintService.FitCentered(new SizeF(792f, 612f), new RectangleF(0f, 0f, 1058f, 816f));
 
         Assert.Equal(1056f, placed.Width, 0.5f);
         Assert.Equal(816f, placed.Height, 0.5f);
@@ -66,7 +77,6 @@ public class PageFittingTests
     {
         var placed = PrintService.FitCentered(new SizeF(0f, 0f), LetterPrintable);
 
-        Assert.Equal(LetterPrintable.Width, placed.Width);
-        Assert.Equal(LetterPrintable.Height, placed.Height);
+        Assert.Equal(LetterPrintable, placed);
     }
 }

@@ -122,7 +122,7 @@ public sealed class PrintService
                 using var page = RenderPage(pdfBytes, pageIndex, renderDpi);
                 if (e.Graphics is { } graphics)
                 {
-                    graphics.DrawImage(page.Image, FitCentered(pageSizes[pageIndex], GetPrintableArea(e)));
+                    graphics.DrawImage(page.Image, FitCentered(pageSizes[pageIndex], GetPrintableArea(e, graphics)));
                 }
 
                 pageIndex++;
@@ -217,40 +217,37 @@ public sealed class PrintService
     }
 
     /// <summary>
-    /// The printable area in hundredths of an inch. Windows reports it in portrait
-    /// terms even for a landscape page, so it is swapped back here.
+    /// The drawable area, in hundredths of an inch. This comes from the printer device
+    /// context itself, so it is already expressed in the page's real orientation —
+    /// unlike <see cref="PageSettings.PrintableArea"/>, whose landscape handling is a
+    /// long-standing source of driver-dependent surprises.
     /// </summary>
-    private static SizeF GetPrintableArea(PrintPageEventArgs e)
+    private static RectangleF GetPrintableArea(PrintPageEventArgs e, Graphics graphics)
     {
-        var printable = e.PageSettings.PrintableArea;
-        var width = printable.Width;
-        var height = printable.Height;
-        if (e.PageSettings.Landscape)
+        var clip = graphics.VisibleClipBounds;
+        if (clip.Width > 0 && clip.Height > 0)
         {
-            (width, height) = (height, width);
+            return clip;
         }
 
-        if (width <= 0 || height <= 0)
-        {
-            // Some drivers report an empty printable area; the full sheet is a safe stand-in.
-            var bounds = e.PageBounds;
-            (width, height) = (bounds.Width, bounds.Height);
-        }
-
-        return new SizeF(width, height);
+        // Some drivers report nothing usable; the full sheet is a safe stand-in
+        // (PageBounds is already swapped for a landscape page).
+        var bounds = e.PageBounds;
+        return new RectangleF(0, 0, bounds.Width, bounds.Height);
     }
 
     /// <summary>
     /// Places a PDF page (size in points, 1/72") centered inside the printable area,
-    /// scaled down to fit but never enlarged. Result is in hundredths of an inch.
+    /// scaled down to fit but never enlarged. Both the area and the result are in
+    /// hundredths of an inch, the units a printer <see cref="Graphics"/> draws in.
     /// </summary>
-    public static RectangleF FitCentered(SizeF pageSizeInPoints, SizeF printableArea)
+    public static RectangleF FitCentered(SizeF pageSizeInPoints, RectangleF printableArea)
     {
         var contentWidth = pageSizeInPoints.Width / 72f * 100f;
         var contentHeight = pageSizeInPoints.Height / 72f * 100f;
         if (contentWidth <= 0 || contentHeight <= 0)
         {
-            return new RectangleF(0, 0, printableArea.Width, printableArea.Height);
+            return printableArea;
         }
 
         var scale = Math.Min(printableArea.Width / contentWidth, printableArea.Height / contentHeight);
@@ -259,8 +256,8 @@ public sealed class PrintService
         var width = contentWidth * scale;
         var height = contentHeight * scale;
         return new RectangleF(
-            (printableArea.Width - width) / 2f,
-            (printableArea.Height - height) / 2f,
+            printableArea.X + ((printableArea.Width - width) / 2f),
+            printableArea.Y + ((printableArea.Height - height) / 2f),
             width,
             height);
     }
