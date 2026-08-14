@@ -34,17 +34,6 @@ public sealed class PrintService
     public static List<string> ListInstalledPrinters() =>
         PrinterSettings.InstalledPrinters.Cast<string>().ToList();
 
-    /// <summary>True when Windows still knows the printer a queue points at.</summary>
-    public static bool PrinterExists(string? printerName)
-    {
-        if (string.IsNullOrWhiteSpace(printerName))
-        {
-            return false;
-        }
-
-        return ListInstalledPrinters().Any(p => string.Equals(p, printerName, StringComparison.OrdinalIgnoreCase));
-    }
-
     /// <summary>
     /// Renders and spools the job. Completing means the spooler accepted the document —
     /// what happens after that (paper jams, an offline printer) is not visible here.
