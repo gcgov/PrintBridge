@@ -44,7 +44,8 @@ Intune admin center last only until the next release.
 The installer installs PrintBridge for one user, in
 `%LOCALAPPDATA%\Programs\PrintBridge`. For this reason, the app must use the **User**
 install behavior. A silent install selects the **autostart** task, so PrintBridge starts
-when the user signs in.
+when the user signs in. A silent install also closes a running PrintBridge and then
+starts it again. On a first install, PrintBridge opens its settings window.
 
 ## One-time setup
 
