@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.10.0.schema.json
+
+PackageIdentifier: GarrettCountyGovernment.PrintBridge
+PackageVersion: 1.0.1
+PackageLocale: en-US
+Publisher: Garrett County Government
+PublisherUrl: https://github.com/gcgov
+PublisherSupportUrl: https://github.com/gcgov/PrintBridge/issues
+Author: Garrett County Government
+PackageName: PrintBridge
+PackageUrl: https://github.com/gcgov/PrintBridge
+License: MIT
+LicenseUrl: https://github.com/gcgov/PrintBridge/blob/main/LICENSE
+Copyright: Copyright (c) 2026 Garrett County Government
+ShortDescription: Lets web applications print PDF files on desktop printers through a local HTTP API.
+Description: |-
+  PrintBridge is a Windows tray app that prints PDF files for web applications.
+  A web page sends a PDF file to the local HTTP API on 127.0.0.1.
+  PrintBridge sends the file to the Windows print spooler, with no print dialog.
+  An administrator maps named queues to installed printers.
+  An administrator also lists the website origins that can print.
+Tags:
+- pdf
+- print
+- printer
+- tray
+- web
+ReleaseNotesUrl: https://github.com/gcgov/PrintBridge/releases/tag/v1.0.1
+Documentations:
+- DocumentLabel: HTTP API
+  DocumentUrl: https://github.com/gcgov/PrintBridge/blob/main/docs/api.md
+ManifestType: defaultLocale
+ManifestVersion: 1.10.0

@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.10.0.schema.json
+
+PackageIdentifier: GarrettCountyGovernment.PrintBridge
+PackageVersion: 1.0.1
+InstallerType: inno
+Scope: user
+UpgradeBehavior: install
+# Inno Setup names the uninstall registry key after the AppId in installer/PrintBridge.iss.
+ProductCode: '{4E1B9D7A-8C36-4F52-B0A9-6D3E5C7F81B4}_is1'
+ReleaseDate: 2026-10-01
+AppsAndFeaturesEntries:
+- Publisher: PrintBridge contributors
+  ProductCode: '{4E1B9D7A-8C36-4F52-B0A9-6D3E5C7F81B4}_is1'
+Installers:
+- Architecture: x64
+  InstallerUrl: https://github.com/gcgov/PrintBridge/releases/download/v1.0.1/PrintBridge-1.0.1-setup.exe
+  InstallerSha256: 8140254C2D374E0B4295D775DF2309991845E657BBEA8F3C67A60D4EB27BD9C9
+ManifestType: installer
+ManifestVersion: 1.10.0
