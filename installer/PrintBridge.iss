@@ -45,6 +45,9 @@ Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; \
 [Run]
 Filename: "{app}\PrintBridge.exe"; Description: "Launch PrintBridge now"; \
   Flags: nowait postinstall skipifsilent
+; A silent install (Intune) closes a running PrintBridge before it replaces files.
+; Start it again. On a first install, it opens the settings window, as an interactive install does.
+Filename: "{app}\PrintBridge.exe"; Flags: nowait; Check: WizardSilent
 
 [UninstallRun]
 Filename: "taskkill"; Parameters: "/im PrintBridge.exe /f"; Flags: runhidden; RunOnceId: "KillPrintBridge"
