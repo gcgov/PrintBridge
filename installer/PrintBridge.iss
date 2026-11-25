@@ -24,8 +24,11 @@ SetupIconFile=..\src\PrintBridge\Resources\printbridge.ico
 UninstallDisplayIcon={app}\PrintBridge.exe
 Compression=lzma2
 SolidCompression=yes
-; Ask a running PrintBridge to close before replacing files.
-CloseApplications=yes
+; Close a running PrintBridge before replacing files. PrintBridge is a tray app with no main window,
+; so it ignores the polite close request from Windows Restart Manager. "force" ends it.
+; Without this, a silent upgrade cannot replace PrintBridge.exe and exits with code 5, which
+; Intune shows as "Access is denied. (0x80070005)".
+CloseApplications=force
 WizardStyle=modern
 ; Show the language dialog only when no installer language matches the Windows language.
 ShowLanguageDialog=auto
