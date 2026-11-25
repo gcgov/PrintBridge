@@ -100,6 +100,8 @@ public static class Strings
     public static string ApiNotAPdf => S();
     public static string ApiDocumentTooLarge(long megabytes) => F([megabytes]);
     public static string ApiPrintJobNotFound => S();
+    public static string ApiInvalidHost => S();
+    public static string ApiOriginNotAllowed(string origin) => F([origin]);
 
     // ---- Print errors (also used as LocalizedMessage keys) ----
     public static string PrintCanceled => S();

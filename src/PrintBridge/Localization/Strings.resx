@@ -236,6 +236,14 @@
     <value>Unknown print job.</value>
     <comment>API error.</comment>
   </data>
+  <data name="ApiInvalidHost" xml:space="preserve">
+    <value>The Host header must be 127.0.0.1 or localhost with the PrintBridge port.</value>
+    <comment>API error.</comment>
+  </data>
+  <data name="ApiOriginNotAllowed" xml:space="preserve">
+    <value>The website {0} is not allowed to use PrintBridge. Add it in the PrintBridge settings.</value>
+    <comment>API error. {0} = website origin.</comment>
+  </data>
   <data name="PrintCanceled" xml:space="preserve">
     <value>The print job was canceled.</value>
     <comment>Print error.</comment>

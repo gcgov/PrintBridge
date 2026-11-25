@@ -73,7 +73,9 @@ public sealed class WebHostRunner : IAsyncDisposable
 
                 var app = builder.Build();
                 app.UseRequestLocalization(ConfigureRequestLocalization);
+                app.UseHostValidation(settings.Port);
                 app.UseCors(CorsPolicyName);
+                app.UseOriginCheck(settings.AllowedOrigins.ToArray());
                 ApiEndpoints.Map(app, _settingsStore, _jobManager);
 
                 await app.StartAsync().ConfigureAwait(false);

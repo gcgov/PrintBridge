@@ -103,7 +103,7 @@ public static class ApiEndpoints
             var job = jobManager.Get(jobId);
             if (job is null)
             {
-                return Error(StatusCodes.Status404NotFound, "notFound", Strings.ApiPrintJobNotFound);
+                return Error(StatusCodes.Status404NotFound, ApiErrorCodes.NotFound, Strings.ApiPrintJobNotFound);
             }
 
             return Results.Ok(ToResponse(job));

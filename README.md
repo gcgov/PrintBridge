@@ -138,6 +138,11 @@ GPO or Intune; Firefox has an equivalent `LocalNetworkAccess` policy).
 
 - The listener binds to `127.0.0.1` only — nothing on the network can reach it.
 - Browsers enforce CORS: only origins on the allowlist get responses.
+- A `POST` or `DELETE` from a website that is not on the allowlist gets `403`, so such a
+  site cannot start or cancel a print job, even with a request that skips the CORS
+  preflight.
+- Only a `Host` header of `127.0.0.1:<port>` or `localhost:<port>` is accepted, which
+  blocks DNS rebinding.
 - Callers can only reach printers an administrator mapped to a queue, and never learn
   the printer names.
 - Requests carry no credentials and PrintBridge stores no secrets; the worst a
