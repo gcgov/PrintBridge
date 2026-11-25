@@ -1,3 +1,4 @@
+using PrintBridge.Localization;
 using PrintBridge.Printing;
 
 namespace PrintBridge.Settings;
@@ -41,6 +42,12 @@ public sealed class AppSettings
 
     public bool RunAtLogin { get; set; } = true;
 
+    /// <summary>
+    /// Language of the tray and the settings window: "auto" (follow the Windows display
+    /// language) or a culture name from <see cref="UiLanguage.Supported"/>, such as "it".
+    /// </summary>
+    public string Language { get; set; } = UiLanguage.Automatic;
+
     public AppSettings Clone() => new()
     {
         Port = Port,
@@ -48,6 +55,7 @@ public sealed class AppSettings
         Queues = Queues.Select(q => q.Clone()).ToList(),
         DefaultQueue = DefaultQueue,
         RunAtLogin = RunAtLogin,
+        Language = Language,
     };
 
     /// <summary>Machine-readable reasons a queue could not be resolved, as the API reports them.</summary>

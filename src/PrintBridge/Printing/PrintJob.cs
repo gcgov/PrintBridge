@@ -1,3 +1,5 @@
+using PrintBridge.Localization;
+
 namespace PrintBridge.Printing;
 
 public enum PrintJobStatus
@@ -25,13 +27,17 @@ public static class PrintErrorCodes
 /// <summary>Thrown by the print pipeline with a machine-readable code from <see cref="PrintErrorCodes"/>.</summary>
 public sealed class PrintBridgeException : Exception
 {
-    public PrintBridgeException(string code, string message, Exception? inner = null)
-        : base(message, inner)
+    public PrintBridgeException(string code, LocalizedMessage text, Exception? inner = null)
+        : base(text.ToLogString(), inner)
     {
         Code = code;
+        Text = text;
     }
 
     public string Code { get; }
+
+    /// <summary>The message for people, rendered in each reader's language. <see cref="Exception.Message"/> is the English text.</summary>
+    public LocalizedMessage Text { get; }
 }
 
 /// <summary>
@@ -66,7 +72,8 @@ public sealed class PrintJob
 
     public string? ErrorCode { get; internal set; }
 
-    public string? ErrorMessage { get; internal set; }
+    /// <summary>Why the job failed or was canceled, rendered in each reader's language.</summary>
+    public LocalizedMessage? ErrorMessage { get; internal set; }
 
     /// <summary>The submitted PDF. Released (set to null) once the job reaches a terminal state.</summary>
     public byte[]? PdfBytes { get; internal set; }

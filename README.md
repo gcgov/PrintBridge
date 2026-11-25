@@ -59,6 +59,7 @@ Right-click the tray icon → **Settings…**
 | Port | The local HTTP port (default **7227**). PrintBridge listens on `127.0.0.1` only — it is never reachable from the network. |
 | Allowed website origins | Exact origins (e.g. `https://apps.example.gov`) allowed to call the API from a browser. Empty list = no site may use it. |
 | Start when I sign in | Per-user autostart (registry `Run` key). |
+| Language | **Automatic** follows the Windows display language. You can also pick a language. |
 
 Settings live in `%AppData%\PrintBridge\settings.json`; logs in
 `%LocalAppData%\PrintBridge\logs`.
@@ -75,6 +76,23 @@ Settings live in `%AppData%\PrintBridge\settings.json`; logs in
   "runAtLogin": true
 }
 ```
+
+## Languages
+
+PrintBridge is available in English and Italian.
+
+- **Tray and settings window:** follow the Windows display language, or the **Language**
+  setting. If Windows uses a language without a translation, PrintBridge uses English.
+- **HTTP API:** error `message` texts follow the request's `Accept-Language` header, so a
+  web page shows them in its user's language. Error `code` values never change.
+- **Installer:** English or Italian, picked from the Windows language.
+- **Log files:** always English, so that support staff can read them.
+
+To add a language, copy `src/PrintBridge/Localization/Strings.resx` to
+`Strings.<culture>.resx` (for example `Strings.es.resx`) and translate each `<value>`.
+Then add the language to `UiLanguage.Supported`, to `SatelliteResourceLanguages` in
+`PrintBridge.csproj`, and to the `[Languages]` section of `installer/PrintBridge.iss`.
+The tests in `LocalizationTests` fail if a key or a `{0}` placeholder is missing.
 
 ## Using it from a web page
 
@@ -120,6 +138,11 @@ GPO or Intune; Firefox has an equivalent `LocalNetworkAccess` policy).
 
 - The listener binds to `127.0.0.1` only — nothing on the network can reach it.
 - Browsers enforce CORS: only origins on the allowlist get responses.
+- A `POST` or `DELETE` from a website that is not on the allowlist gets `403`, so such a
+  site cannot start or cancel a print job, even with a request that skips the CORS
+  preflight.
+- Only a `Host` header of `127.0.0.1:<port>` or `localhost:<port>` is accepted, which
+  blocks DNS rebinding.
 - Callers can only reach printers an administrator mapped to a queue, and never learn
   the printer names.
 - Requests carry no credentials and PrintBridge stores no secrets; the worst a

@@ -4,6 +4,7 @@ using System.Runtime.ExceptionServices;
 using Microsoft.Extensions.Logging;
 using PDFtoImage;
 using PDFtoImage.Exceptions;
+using PrintBridge.Localization;
 
 namespace PrintBridge.Printing;
 
@@ -54,13 +55,13 @@ public sealed class PrintService
         catch (Exception ex) when (IsPdfFailure(ex))
         {
             throw new PrintBridgeException(PrintErrorCodes.InvalidDocument,
-                "The document could not be read as a PDF.", ex);
+                new LocalizedMessage(nameof(Strings.PrintUnreadablePdf)), ex);
         }
 
         var pageCount = pageSizes.Count;
         if (pageCount == 0)
         {
-            throw new PrintBridgeException(PrintErrorCodes.InvalidDocument, "The PDF contains no pages.");
+            throw new PrintBridgeException(PrintErrorCodes.InvalidDocument, new LocalizedMessage(nameof(Strings.PrintEmptyPdf)));
         }
 
         using var document = new PrintDocument();
@@ -70,13 +71,13 @@ public sealed class PrintService
             if (!document.PrinterSettings.IsValid)
             {
                 throw new PrintBridgeException(PrintErrorCodes.PrinterUnavailable,
-                    $"The printer for queue '{request.Queue}' is not available.");
+                    new LocalizedMessage(nameof(Strings.PrintPrinterUnavailable), request.Queue));
             }
         }
         catch (InvalidPrinterException ex)
         {
             throw new PrintBridgeException(PrintErrorCodes.PrinterUnavailable,
-                $"The printer for queue '{request.Queue}' is not available.", ex);
+                new LocalizedMessage(nameof(Strings.PrintPrinterUnavailable), request.Queue), ex);
         }
 
         document.DocumentName = $"PrintBridge — {request.Queue}";
@@ -143,12 +144,12 @@ public sealed class PrintService
             catch (InvalidPrinterException ex)
             {
                 throw new PrintBridgeException(PrintErrorCodes.PrinterUnavailable,
-                    $"The printer for queue '{request.Queue}' is not available.", ex);
+                    new LocalizedMessage(nameof(Strings.PrintPrinterUnavailable), request.Queue), ex);
             }
             catch (Win32Exception ex)
             {
                 throw new PrintBridgeException(PrintErrorCodes.PrintFailed,
-                    $"Windows refused the print job: {ex.Message}", ex);
+                    new LocalizedMessage(nameof(Strings.PrintWindowsRefused), ex.Message), ex);
             }
 
             if (pageFailure is not null)
@@ -271,7 +272,7 @@ public sealed class PrintService
         {
             png.Dispose();
             throw new PrintBridgeException(PrintErrorCodes.InvalidDocument,
-                $"Page {pageIndex + 1} of the PDF could not be rendered.", ex);
+                new LocalizedMessage(nameof(Strings.PrintPageRenderFailed), pageIndex + 1), ex);
         }
         catch
         {

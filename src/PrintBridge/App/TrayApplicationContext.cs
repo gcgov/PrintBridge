@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using PrintBridge.Hosting;
+using PrintBridge.Localization;
 using PrintBridge.Printing;
 using PrintBridge.Settings;
 using Serilog;
@@ -9,6 +10,12 @@ namespace PrintBridge.App;
 /// <summary>
 /// The tray icon and its menu. PrintBridge has no main window — the tray icon is the app.
 /// </summary>
+/// <remarks>
+/// Every text is built on the UI thread, in the desktop language. Events from print jobs
+/// and from the web host arrive on other threads, so the handlers go through
+/// <see cref="PostToUi"/>, which also drops the caller's culture (a web request can carry
+/// another language in its Accept-Language header).
+/// </remarks>
 public sealed class TrayApplicationContext : ApplicationContext
 {
     private readonly SettingsStore _settingsStore;
@@ -17,6 +24,7 @@ public sealed class TrayApplicationContext : ApplicationContext
     private readonly NotifyIcon _notifyIcon;
     private readonly SynchronizationContext _syncContext;
     private SettingsForm? _settingsForm;
+    private string _language;
 
     public TrayApplicationContext(
         SettingsStore settingsStore,
@@ -28,36 +36,42 @@ public sealed class TrayApplicationContext : ApplicationContext
         _jobManager = jobManager;
         _webHostRunner = webHostRunner;
         _syncContext = SynchronizationContext.Current ?? new WindowsFormsSynchronizationContext();
-
-        var menu = new ContextMenuStrip();
-        menu.Items.Add("Settings…", null, (_, _) => ShowSettings());
-        menu.Items.Add("Print test page", null, (_, _) => PrintTestPage());
-        menu.Items.Add("Open log folder", null, (_, _) => OpenLogFolder());
-        menu.Items.Add(new ToolStripSeparator());
-        menu.Items.Add("Exit", null, (_, _) => ExitApplication());
+        _language = settingsStore.Current.Language;
 
         _notifyIcon = new NotifyIcon
         {
             Icon = LoadIcon(),
             Text = "PrintBridge",
-            ContextMenuStrip = menu,
+            ContextMenuStrip = BuildMenu(),
             Visible = true,
         };
         _notifyIcon.DoubleClick += (_, _) => ShowSettings();
 
         _jobManager.JobFinished += OnJobFinished;
         _webHostRunner.StatusChanged += OnListenerStatusChanged;
+        _settingsStore.Changed += OnSettingsChanged;
 
         if (_webHostRunner.LastError is { } startupError)
         {
-            ShowBalloon("PrintBridge", startupError, ToolTipIcon.Warning);
+            ShowBalloon("PrintBridge", startupError.ToString(), ToolTipIcon.Warning);
         }
 
         if (openSettingsOnStartup)
         {
             // Let the message loop start before opening the window.
-            _syncContext.Post(_ => ShowSettings(), null);
+            PostToUi(ShowSettings);
         }
+    }
+
+    private ContextMenuStrip BuildMenu()
+    {
+        var menu = new ContextMenuStrip();
+        menu.Items.Add(Strings.TrayMenuSettings, null, (_, _) => ShowSettings());
+        menu.Items.Add(Strings.TrayMenuTestPage, null, (_, _) => PrintTestPage());
+        menu.Items.Add(Strings.OpenLogFolder, null, (_, _) => OpenLogFolder());
+        menu.Items.Add(new ToolStripSeparator());
+        menu.Items.Add(Strings.TrayMenuExit, null, (_, _) => ExitApplication());
+        return menu;
     }
 
     private static Icon LoadIcon()
@@ -100,7 +114,7 @@ public sealed class TrayApplicationContext : ApplicationContext
         var settings = _settingsStore.Current;
         if (!settings.TryResolveQueue(null, out var queue, out _))
         {
-            ShowBalloon("PrintBridge", "No print queue is configured yet — open Settings first.", ToolTipIcon.Warning);
+            ShowBalloon("PrintBridge", Strings.TrayNoQueueConfigured, ToolTipIcon.Warning);
             ShowSettings();
             return;
         }
@@ -114,12 +128,12 @@ public sealed class TrayApplicationContext : ApplicationContext
         catch (Exception ex)
         {
             Log.Error(ex, "Could not read the bundled test page from {Path}", testPagePath);
-            ShowBalloon("PrintBridge", $"Could not read the test page: {ex.Message}", ToolTipIcon.Error);
+            ShowBalloon("PrintBridge", Strings.TrayTestPageUnreadable(ex.Message), ToolTipIcon.Error);
             return;
         }
 
         _jobManager.Enqueue(new PrintRequest(queue.Name, queue.PrinterName, Copies: 1, PdfBytes: pdfBytes));
-        ShowBalloon("PrintBridge", $"Sent a test page to \"{queue.Name}\".", ToolTipIcon.Info);
+        ShowBalloon("PrintBridge", Strings.TrayTestPageSent(queue.Name), ToolTipIcon.Info);
     }
 
     private void OpenLogFolder()
@@ -130,26 +144,55 @@ public sealed class TrayApplicationContext : ApplicationContext
         Process.Start(new ProcessStartInfo(logDirectory) { UseShellExecute = true });
     }
 
-    private void OnJobFinished(PrintJob job)
+    private void OnJobFinished(PrintJob job) => PostToUi(() =>
     {
         if (job.Status == PrintJobStatus.Failed)
         {
-            ShowBalloon("PrintBridge — print failed", job.ErrorMessage ?? "The print job failed.", ToolTipIcon.Error);
+            ShowBalloon(Strings.TrayPrintFailedTitle, job.ErrorMessage?.ToString() ?? string.Empty, ToolTipIcon.Error);
         }
-    }
+    });
 
-    private void OnListenerStatusChanged()
+    private void OnListenerStatusChanged() => PostToUi(() =>
     {
         if (_webHostRunner.LastError is { } error)
         {
-            ShowBalloon("PrintBridge", error, ToolTipIcon.Warning);
+            ShowBalloon("PrintBridge", error.ToString(), ToolTipIcon.Warning);
         }
-    }
+    });
 
-    private void ShowBalloon(string title, string message, ToolTipIcon icon)
+    /// <summary>Rebuilds the menu when the language changes. The settings window applies it the next time it opens.</summary>
+    private void OnSettingsChanged(AppSettings settings) => PostToUi(() =>
     {
-        // Events can fire on worker threads; NotifyIcon belongs to the UI thread.
-        _syncContext.Post(_ => _notifyIcon.ShowBalloonTip(5000, title, message, icon), null);
+        if (settings.Language == _language)
+        {
+            return;
+        }
+
+        _language = settings.Language;
+        var oldMenu = _notifyIcon.ContextMenuStrip;
+        _notifyIcon.ContextMenuStrip = BuildMenu();
+        oldMenu?.Dispose();
+    });
+
+    private void ShowBalloon(string title, string message, ToolTipIcon icon) =>
+        PostToUi(() => _notifyIcon.ShowBalloonTip(5000, title, message, icon));
+
+    /// <summary>
+    /// Runs <paramref name="action"/> on the UI thread, in the UI thread's own execution
+    /// context. Suppressing the flow keeps the culture of a web request out of the tray.
+    /// </summary>
+    private void PostToUi(Action action)
+    {
+        if (ExecutionContext.IsFlowSuppressed())
+        {
+            _syncContext.Post(_ => action(), null);
+            return;
+        }
+
+        using (ExecutionContext.SuppressFlow())
+        {
+            _syncContext.Post(_ => action(), null);
+        }
     }
 
     private void ExitApplication()
@@ -164,6 +207,7 @@ public sealed class TrayApplicationContext : ApplicationContext
         {
             _jobManager.JobFinished -= OnJobFinished;
             _webHostRunner.StatusChanged -= OnListenerStatusChanged;
+            _settingsStore.Changed -= OnSettingsChanged;
             _notifyIcon.Dispose();
         }
 

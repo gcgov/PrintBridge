@@ -1,15 +1,23 @@
 using PrintBridge.Hosting;
+using PrintBridge.Localization;
 using PrintBridge.Settings;
 
 namespace PrintBridge.App;
 
 /// <summary>
 /// The configuration window: the named print queues, the local server (port + allowed
-/// browser origins) and the run-at-login toggle.
+/// browser origins), the run-at-login toggle and the UI language.
 /// Built in code rather than with the WinForms designer to keep it reviewable.
+/// Every text comes from <see cref="Strings"/> when the window opens, so a language
+/// change applies the next time the window opens.
 /// </summary>
 public sealed class SettingsForm : Form
 {
+    private sealed record LanguageItem(string Value, string Label)
+    {
+        public override string ToString() => Label;
+    }
+
     private readonly SettingsStore _settingsStore;
     private readonly WebHostRunner _webHostRunner;
     private readonly SynchronizationContext _syncContext;
@@ -27,19 +35,20 @@ public sealed class SettingsForm : Form
         Height = 130,
     };
 
-    private readonly Button _addQueueButton = new() { Text = "Add…", AutoSize = true };
-    private readonly Button _editQueueButton = new() { Text = "Edit…", AutoSize = true };
-    private readonly Button _removeQueueButton = new() { Text = "Remove", AutoSize = true };
-    private readonly Button _defaultQueueButton = new() { Text = "Set as default", AutoSize = true };
+    private readonly Button _addQueueButton = new() { Text = Strings.SettingsAddQueue, AutoSize = true };
+    private readonly Button _editQueueButton = new() { Text = Strings.SettingsEditQueue, AutoSize = true };
+    private readonly Button _removeQueueButton = new() { Text = Strings.SettingsRemoveQueue, AutoSize = true };
+    private readonly Button _defaultQueueButton = new() { Text = Strings.SettingsSetDefaultQueue, AutoSize = true };
 
     private readonly NumericUpDown _portInput = new() { Minimum = 1024, Maximum = 65535, Width = 100 };
     private readonly ListBox _originsList = new() { Width = 420, Height = 90 };
     private readonly TextBox _originInput = new() { Width = 300, PlaceholderText = "https://apps.example.gov" };
-    private readonly Button _addOriginButton = new() { Text = "Add", AutoSize = true };
-    private readonly Button _removeOriginButton = new() { Text = "Remove selected", AutoSize = true };
+    private readonly Button _addOriginButton = new() { Text = Strings.SettingsAddOrigin, AutoSize = true };
+    private readonly Button _removeOriginButton = new() { Text = Strings.SettingsRemoveOrigin, AutoSize = true };
     private readonly Label _listenerStatusLabel = new() { AutoSize = true, ForeColor = SystemColors.GrayText, Text = string.Empty };
 
-    private readonly CheckBox _runAtLoginCheck = new() { Text = "Start PrintBridge when I sign in to Windows", AutoSize = true };
+    private readonly CheckBox _runAtLoginCheck = new() { Text = Strings.SettingsRunAtLogin, AutoSize = true };
+    private readonly ComboBox _languageCombo = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 220 };
 
     public SettingsForm(SettingsStore settingsStore, WebHostRunner webHostRunner)
     {
@@ -47,7 +56,7 @@ public sealed class SettingsForm : Form
         _webHostRunner = webHostRunner;
         _syncContext = SynchronizationContext.Current ?? new WindowsFormsSynchronizationContext();
 
-        Text = "PrintBridge Settings";
+        Text = Strings.SettingsTitle;
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false;
         MinimizeBox = false;
@@ -89,15 +98,15 @@ public sealed class SettingsForm : Form
 
     private void BuildLayout()
     {
-        _queuesList.Columns.Add("Queue", 150);
-        _queuesList.Columns.Add("Printer", 250);
-        _queuesList.Columns.Add("Default", 60);
+        _queuesList.Columns.Add(Strings.SettingsQueueColumn, 150);
+        _queuesList.Columns.Add(Strings.SettingsPrinterColumn, 230);
+        _queuesList.Columns.Add(Strings.SettingsDefaultColumn, 80);
 
-        var queuesGroup = new GroupBox { Text = "Print queues", AutoSize = true, Dock = DockStyle.Top, Padding = new Padding(10) };
+        var queuesGroup = new GroupBox { Text = Strings.SettingsQueuesGroup, AutoSize = true, Dock = DockStyle.Top, Padding = new Padding(10) };
         var queuesLayout = new TableLayoutPanel { AutoSize = true, ColumnCount = 1, Dock = DockStyle.Fill };
         var queuesHint = new Label
         {
-            Text = "Web apps request a queue by name — they never see the printer behind it.",
+            Text = Strings.SettingsQueuesHint,
             AutoSize = true,
             Anchor = AnchorStyles.Left,
         };
@@ -111,14 +120,14 @@ public sealed class SettingsForm : Form
         queuesLayout.Controls.Add(queueButtons, 0, 2);
         queuesGroup.Controls.Add(queuesLayout);
 
-        var serverGroup = new GroupBox { Text = "Local server", AutoSize = true, Dock = DockStyle.Top, Padding = new Padding(10) };
+        var serverGroup = new GroupBox { Text = Strings.SettingsServerGroup, AutoSize = true, Dock = DockStyle.Top, Padding = new Padding(10) };
         var serverLayout = new TableLayoutPanel { AutoSize = true, ColumnCount = 3, Dock = DockStyle.Fill };
-        serverLayout.Controls.Add(new Label { Text = "Port:", AutoSize = true, Anchor = AnchorStyles.Left }, 0, 0);
+        serverLayout.Controls.Add(new Label { Text = Strings.SettingsPortLabel, AutoSize = true, Anchor = AnchorStyles.Left }, 0, 0);
         serverLayout.Controls.Add(_portInput, 1, 0);
         serverLayout.Controls.Add(_listenerStatusLabel, 2, 0);
         var originsLabel = new Label
         {
-            Text = "Allowed website origins (only these sites may print from a browser):",
+            Text = Strings.SettingsOriginsLabel,
             AutoSize = true,
             Anchor = AnchorStyles.Left,
         };
@@ -136,9 +145,12 @@ public sealed class SettingsForm : Form
 
         var startupPanel = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Top, Padding = new Padding(4) };
         startupPanel.Controls.Add(_runAtLoginCheck);
+        startupPanel.SetFlowBreak(_runAtLoginCheck, true);
+        startupPanel.Controls.Add(new Label { Text = Strings.SettingsLanguageLabel, AutoSize = true, Margin = new Padding(3, 6, 0, 0) });
+        startupPanel.Controls.Add(_languageCombo);
 
-        var saveButton = new Button { Text = "Save", AutoSize = true, DialogResult = DialogResult.OK };
-        var cancelButton = new Button { Text = "Cancel", AutoSize = true, DialogResult = DialogResult.Cancel };
+        var saveButton = new Button { Text = Strings.SettingsSave, AutoSize = true, DialogResult = DialogResult.OK };
+        var cancelButton = new Button { Text = Strings.SettingsCancel, AutoSize = true, DialogResult = DialogResult.Cancel };
         saveButton.Click += (_, _) => SaveAndClose();
         cancelButton.Click += (_, _) => Close();
         AcceptButton = saveButton;
@@ -178,6 +190,15 @@ public sealed class SettingsForm : Form
         }
 
         _runAtLoginCheck.Checked = settings.RunAtLogin;
+
+        _languageCombo.Items.Add(new LanguageItem(UiLanguage.Automatic, Strings.SettingsLanguageAutomatic));
+        foreach (var language in UiLanguage.Supported)
+        {
+            _languageCombo.Items.Add(new LanguageItem(language.Name, language.NativeName));
+        }
+
+        var configured = UiLanguage.FindSupported(settings.Language ?? string.Empty)?.Name ?? UiLanguage.Automatic;
+        _languageCombo.SelectedItem = _languageCombo.Items.Cast<LanguageItem>().First(l => l.Value == configured);
     }
 
     private void RefreshQueueList()
@@ -188,7 +209,7 @@ public sealed class SettingsForm : Form
         foreach (var queue in _queues)
         {
             var isDefault = string.Equals(queue.Name, _defaultQueue, StringComparison.OrdinalIgnoreCase);
-            var item = new ListViewItem([queue.Name, queue.PrinterName, isDefault ? "Yes" : string.Empty])
+            var item = new ListViewItem([queue.Name, queue.PrinterName, isDefault ? Strings.SettingsDefaultYes : string.Empty])
             {
                 Tag = queue,
                 Selected = string.Equals(queue.Name, selectedName, StringComparison.OrdinalIgnoreCase),
@@ -265,8 +286,8 @@ public sealed class SettingsForm : Form
             string.Equals(q.Name, name, StringComparison.OrdinalIgnoreCase));
         if (clash)
         {
-            MessageBox.Show(this, $"There is already a queue named \"{name}\".",
-                "Duplicate queue name", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(this, Strings.SettingsDuplicateQueueMessage(name),
+                Strings.SettingsDuplicateQueueTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         return clash;
@@ -302,8 +323,8 @@ public sealed class SettingsForm : Form
         if (!AppSettings.TryNormalizeOrigin(_originInput.Text, out var normalized))
         {
             MessageBox.Show(this,
-                "Enter a full origin such as https://apps.example.gov — scheme and host only, no path.",
-                "Invalid origin", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Strings.SettingsInvalidOriginMessage,
+                Strings.SettingsInvalidOriginTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
@@ -323,6 +344,7 @@ public sealed class SettingsForm : Form
         settings.Port = (int)_portInput.Value;
         settings.AllowedOrigins = _originsList.Items.Cast<string>().ToList();
         settings.RunAtLogin = _runAtLoginCheck.Checked;
+        settings.Language = (_languageCombo.SelectedItem as LanguageItem)?.Value ?? UiLanguage.Automatic;
 
         _settingsStore.Save(settings);
         Close();
@@ -337,12 +359,12 @@ public sealed class SettingsForm : Form
     {
         if (_webHostRunner.IsRunning)
         {
-            _listenerStatusLabel.Text = $"Listening on http://127.0.0.1:{_settingsStore.Current.Port}";
+            _listenerStatusLabel.Text = Strings.SettingsListening(_settingsStore.Current.Port);
             _listenerStatusLabel.ForeColor = Color.DarkGreen;
         }
         else
         {
-            _listenerStatusLabel.Text = _webHostRunner.LastError ?? "Not listening";
+            _listenerStatusLabel.Text = _webHostRunner.LastError?.ToString() ?? Strings.NotListening;
             _listenerStatusLabel.ForeColor = Color.Firebrick;
         }
     }

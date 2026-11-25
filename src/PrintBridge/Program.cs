@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using PrintBridge.App;
 using PrintBridge.Hosting;
+using PrintBridge.Localization;
 using PrintBridge.Printing;
 using PrintBridge.Settings;
 using Serilog;
@@ -37,6 +38,10 @@ internal static class Program
             var settingsStore = new SettingsStore();
             settingsStore.Load();
 
+            // Before any window or tray text is created.
+            var uiCulture = UiLanguage.Apply(settingsStore.Current.Language);
+            Log.Information("UI language {Culture} (setting {Setting})", uiCulture.Name, settingsStore.Current.Language);
+
             try
             {
                 StartupRegistration.Apply(settingsStore.Current.RunAtLogin);
@@ -53,6 +58,9 @@ internal static class Program
 
             settingsStore.Changed += settings =>
             {
+                // Runs before the tray's own handler, which rebuilds the menu in the new language.
+                UiLanguage.Apply(settings.Language);
+
                 try
                 {
                     StartupRegistration.Apply(settings.RunAtLogin);

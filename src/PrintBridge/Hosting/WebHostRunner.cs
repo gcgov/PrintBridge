@@ -1,10 +1,13 @@
+using System.Globalization;
 using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using PrintBridge.Api;
+using PrintBridge.Localization;
 using PrintBridge.Printing;
 using PrintBridge.Settings;
 using Serilog;
@@ -34,7 +37,8 @@ public sealed class WebHostRunner : IAsyncDisposable
 
     public bool IsRunning { get; private set; }
 
-    public string? LastError { get; private set; }
+    /// <summary>Why the listener is not running, or null. Render it in the reader's language.</summary>
+    public LocalizedMessage? LastError { get; private set; }
 
     /// <summary>Raised on start/stop/failure so the tray and settings window can show listener state.</summary>
     public event Action? StatusChanged;
@@ -68,7 +72,10 @@ public sealed class WebHostRunner : IAsyncDisposable
                 });
 
                 var app = builder.Build();
+                app.UseRequestLocalization(ConfigureRequestLocalization);
+                app.UseHostValidation(settings.Port);
                 app.UseCors(CorsPolicyName);
+                app.UseOriginCheck(settings.AllowedOrigins.ToArray());
                 ApiEndpoints.Map(app, _settingsStore, _jobManager);
 
                 await app.StartAsync().ConfigureAwait(false);
@@ -81,8 +88,8 @@ public sealed class WebHostRunner : IAsyncDisposable
             {
                 IsRunning = false;
                 LastError = ex is IOException
-                    ? $"Could not listen on port {settings.Port} — it may be in use by another program."
-                    : ex.Message;
+                    ? new LocalizedMessage(nameof(Strings.ServerPortInUse), settings.Port)
+                    : new LocalizedMessage(nameof(Strings.ServerStartFailed), ex.Message);
                 _logger.Error(ex, "Failed to start the PrintBridge API on port {Port}", settings.Port);
             }
         }
@@ -91,6 +98,23 @@ public sealed class WebHostRunner : IAsyncDisposable
             _lifecycleLock.Release();
             StatusChanged?.Invoke();
         }
+    }
+
+    /// <summary>
+    /// Error messages follow the request's Accept-Language header, so a web page gets them
+    /// in its user's language. English is the default, not the desktop language: a caller
+    /// that sends no Accept-Language gets the same text as before translations existed.
+    /// </summary>
+    private static void ConfigureRequestLocalization(RequestLocalizationOptions options)
+    {
+        var cultures = UiLanguage.Supported.Select(l => CultureInfo.GetCultureInfo(l.Name)).ToList();
+        options.DefaultRequestCulture = new RequestCulture(UiLanguage.English);
+        options.SupportedCultures = cultures;
+        options.SupportedUICultures = cultures;
+        options.FallBackToParentCultures = true;
+        options.FallBackToParentUICultures = true;
+        options.ApplyCurrentCultureToResponseHeaders = true;
+        options.RequestCultureProviders = [new AcceptLanguageHeaderRequestCultureProvider()];
     }
 
     public async Task StopAsync()

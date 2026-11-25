@@ -8,7 +8,11 @@
     <AssemblyName>PrintBridge</AssemblyName>
     <ApplicationIcon>Resources\printbridge.ico</ApplicationIcon>
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
-    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <!-- English is built into PrintBridge.dll; every other language in Localization/Strings.*.resx
+         ships as a satellite assembly (for example it/PrintBridge.resources.dll). This list also
+         keeps the matching translations of the .NET libraries, and drops the rest. -->
+    <NeutralLanguage>en</NeutralLanguage>
+    <SatelliteResourceLanguages>en;it</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>

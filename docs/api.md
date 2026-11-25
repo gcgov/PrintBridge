@@ -8,6 +8,14 @@ Browsers must be subject to the CORS allowlist: the calling page's origin has to
 listed under *Allowed website origins* in PrintBridge settings. Same-machine tools
 (curl, desktop apps) are not subject to CORS.
 
+A `POST` or `DELETE` request under `/api/v1` that carries an `Origin` header not in the
+allowlist gets `403` `originNotAllowed`, and nothing prints. CORS alone does not stop a
+"simple" cross-origin request (for example a `text/plain` or form body with no
+preflight); this check does. Requests without an `Origin` header, such as curl or a
+desktop app, are not affected. A request whose `Host` header is not `127.0.0.1:<port>`
+or `localhost:<port>` gets `403` `invalidHost` (DNS rebinding protection). Neither check
+needs a change in an existing client.
+
 Requests from browsers should pass `targetAddressSpace: 'loopback'` in the `fetch`
 options to satisfy Chrome's Local Network Access rules (Chrome 142+).
 
@@ -38,8 +46,16 @@ Non-2xx responses (except 404s from unknown URLs) use:
 | `canceled` | The job was canceled. |
 | `printFailed` | Any other print failure; `message` has details. |
 | `notFound` | Unknown job id. |
+| `originNotAllowed` | A `POST`/`DELETE` came from a website that is not in the allowlist. |
+| `invalidHost` | The `Host` header is not PrintBridge's loopback address and port. |
 
 Messages name the queue, never the Windows printer.
+
+Program against `code`: its values never change. `message` is text for people. It is in
+the language of the request's `Accept-Language` header when PrintBridge has that
+language (English and Italian today), and in English otherwise. A request without
+`Accept-Language` gets English. Browsers send the user's language automatically, so a
+web page can show `message` as it is. The response carries a `Content-Language` header.
 
 ## Endpoints
 

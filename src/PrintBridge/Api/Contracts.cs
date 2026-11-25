@@ -16,6 +16,14 @@ public sealed record ApiErrorBody(string Code, string Message);
 
 public sealed record ApiErrorResponse(ApiErrorBody Error);
 
+/// <summary>Error codes the API layer adds to <see cref="PrintBridge.Printing.PrintErrorCodes"/>.</summary>
+public static class ApiErrorCodes
+{
+    public const string NotFound = "notFound";
+    public const string InvalidHost = "invalidHost";
+    public const string OriginNotAllowed = "originNotAllowed";
+}
+
 public sealed record PrintJobResponse(
     string JobId,
     string Status,
