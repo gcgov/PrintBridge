@@ -1,3 +1,5 @@
+using System.Globalization;
+using PrintBridge.Localization;
 using PrintBridge.Printing;
 using Xunit;
 
@@ -146,14 +148,17 @@ public class PrintJobManagerTests
     public async Task PrintBridgeExceptionMapsToItsCode()
     {
         using var manager = new PrintJobManager((_, _, _) =>
-            Task.FromException(new PrintBridgeException(PrintErrorCodes.PrinterUnavailable, "Printer is offline")));
+            Task.FromException(new PrintBridgeException(PrintErrorCodes.PrinterUnavailable,
+                new LocalizedMessage(nameof(Strings.PrintPrinterUnavailable), "labels"))));
 
         var job = manager.Enqueue(Request());
         await WaitForTerminal(job);
 
         Assert.Equal(PrintJobStatus.Failed, job.Status);
         Assert.Equal(PrintErrorCodes.PrinterUnavailable, job.ErrorCode);
-        Assert.Equal("Printer is offline", job.ErrorMessage);
+        Assert.Equal("The printer for queue 'labels' is not available.", job.ErrorMessage!.ToLogString());
+        Assert.Equal("La stampante della coda 'labels' non è disponibile.",
+            job.ErrorMessage.ToString(CultureInfo.GetCultureInfo("it")));
     }
 
     [Fact]
@@ -167,7 +172,7 @@ public class PrintJobManagerTests
 
         Assert.Equal(PrintJobStatus.Failed, job.Status);
         Assert.Equal(PrintErrorCodes.PrintFailed, job.ErrorCode);
-        Assert.Equal("boom", job.ErrorMessage);
+        Assert.Equal("The print job failed: boom", job.ErrorMessage!.ToLogString());
     }
 
     [Fact]

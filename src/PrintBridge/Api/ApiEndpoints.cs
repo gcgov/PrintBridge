@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using PrintBridge.Localization;
 using PrintBridge.Printing;
 using PrintBridge.Settings;
 
@@ -9,6 +10,8 @@ namespace PrintBridge.Api;
 /// <summary>
 /// Maps the localhost HTTP surface. Responses are camelCase JSON; the document to
 /// print is sent as a raw PDF body rather than JSON so nothing has to be base64-encoded.
+/// Error <c>message</c> texts are in the language of the request's Accept-Language header
+/// (English when PrintBridge has no translation for it); error <c>code</c> values never change.
 /// </summary>
 public static class ApiEndpoints
 {
@@ -49,7 +52,7 @@ public static class ApiEndpoints
             if (requestedCopies is < MinCopies or > MaxCopies)
             {
                 return Error(StatusCodes.Status422UnprocessableEntity, PrintErrorCodes.InvalidCopies,
-                    $"copies must be between {MinCopies} and {MaxCopies}.");
+                    Strings.ApiInvalidCopies(MinCopies, MaxCopies));
             }
 
             var settings = settingsStore.Current;
@@ -57,8 +60,8 @@ public static class ApiEndpoints
             {
                 return Error(StatusCodes.Status422UnprocessableEntity, errorCode, errorCode switch
                 {
-                    PrintErrorCodes.UnknownQueue => $"There is no print queue named '{queue}'.",
-                    _ => "No print queue is configured. Open PrintBridge settings and add one.",
+                    PrintErrorCodes.UnknownQueue => Strings.ApiUnknownQueue(queue ?? string.Empty),
+                    _ => Strings.ApiNoQueueConfigured,
                 });
             }
 
@@ -83,7 +86,7 @@ public static class ApiEndpoints
             if (!PdfSniffer.LooksLikePdf(pdfBytes))
             {
                 return Error(StatusCodes.Status422UnprocessableEntity, PrintErrorCodes.InvalidDocument,
-                    "The request body is not a PDF document.");
+                    Strings.ApiNotAPdf);
             }
 
             var job = jobManager.Enqueue(new PrintRequest(
@@ -100,7 +103,7 @@ public static class ApiEndpoints
             var job = jobManager.Get(jobId);
             if (job is null)
             {
-                return Error(StatusCodes.Status404NotFound, "notFound", "Unknown print job.");
+                return Error(StatusCodes.Status404NotFound, "notFound", Strings.ApiPrintJobNotFound);
             }
 
             return Results.Ok(ToResponse(job));
@@ -127,11 +130,11 @@ public static class ApiEndpoints
         Queue: job.Queue,
         Copies: job.Copies,
         PagesPrinted: job.PagesPrinted,
-        Error: job.ErrorCode is null ? null : new ApiErrorBody(job.ErrorCode, job.ErrorMessage ?? string.Empty));
+        Error: job.ErrorCode is null ? null : new ApiErrorBody(job.ErrorCode, job.ErrorMessage?.ToString() ?? string.Empty));
 
     private static IResult TooLarge() =>
         Error(StatusCodes.Status413PayloadTooLarge, PrintErrorCodes.DocumentTooLarge,
-            $"The document is larger than the {MaxBodyBytes / (1024 * 1024)} MB limit.");
+            Strings.ApiDocumentTooLarge(MaxBodyBytes / (1024 * 1024)));
 
     private static IResult Error(int statusCode, string code, string message) =>
         Results.Json(new ApiErrorResponse(new ApiErrorBody(code, message)), statusCode: statusCode);

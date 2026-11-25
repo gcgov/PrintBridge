@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NotListening" xml:space="preserve">
+    <value>Not listening</value>
+    <comment>Status of the local server.</comment>
+  </data>
+  <data name="OpenLogFolder" xml:space="preserve">
+    <value>Open log folder</value>
+    <comment>Tray menu item.</comment>
+  </data>
+  <data name="TrayMenuSettings" xml:space="preserve">
+    <value>Settings…</value>
+    <comment>Tray menu item.</comment>
+  </data>
+  <data name="TrayMenuTestPage" xml:space="preserve">
+    <value>Print test page</value>
+    <comment>Tray menu item.</comment>
+  </data>
+  <data name="TrayMenuExit" xml:space="preserve">
+    <value>Exit</value>
+    <comment>Tray menu item.</comment>
+  </data>
+  <data name="TrayNoQueueConfigured" xml:space="preserve">
+    <value>No print queue is configured yet. Open Settings first.</value>
+    <comment>Tray notification.</comment>
+  </data>
+  <data name="TrayTestPageUnreadable" xml:space="preserve">
+    <value>Could not read the test page: {0}</value>
+    <comment>Tray notification. {0} = error details.</comment>
+  </data>
+  <data name="TrayTestPageSent" xml:space="preserve">
+    <value>Sent a test page to "{0}".</value>
+    <comment>Tray notification. {0} = queue name.</comment>
+  </data>
+  <data name="TrayPrintFailedTitle" xml:space="preserve">
+    <value>PrintBridge: print failed</value>
+    <comment>Title of the tray notification for a failed print job.</comment>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>PrintBridge Settings</value>
+    <comment>Window title.</comment>
+  </data>
+  <data name="SettingsQueuesGroup" xml:space="preserve">
+    <value>Print queues</value>
+    <comment>Group title.</comment>
+  </data>
+  <data name="SettingsQueuesHint" xml:space="preserve">
+    <value>Web apps request a queue by name. They never see the printer behind it.</value>
+    <comment>Help text.</comment>
+  </data>
+  <data name="SettingsQueueColumn" xml:space="preserve">
+    <value>Queue</value>
+    <comment>List column.</comment>
+  </data>
+  <data name="SettingsPrinterColumn" xml:space="preserve">
+    <value>Printer</value>
+    <comment>List column.</comment>
+  </data>
+  <data name="SettingsDefaultColumn" xml:space="preserve">
+    <value>Default</value>
+    <comment>List column.</comment>
+  </data>
+  <data name="SettingsDefaultYes" xml:space="preserve">
+    <value>Yes</value>
+    <comment>Value in the Default column.</comment>
+  </data>
+  <data name="SettingsAddQueue" xml:space="preserve">
+    <value>Add…</value>
+    <comment>Button.</comment>
+  </data>
+  <data name="SettingsEditQueue" xml:space="preserve">
+    <value>Edit…</value>
+    <comment>Button.</comment>
+  </data>
+  <data name="SettingsRemoveQueue" xml:space="preserve">
+    <value>Remove</value>
+    <comment>Button.</comment>
+  </data>
+  <data name="SettingsSetDefaultQueue" xml:space="preserve">
+    <value>Set as default</value>
+    <comment>Button.</comment>
+  </data>
+  <data name="SettingsDuplicateQueueTitle" xml:space="preserve">
+    <value>Duplicate queue name</value>
+    <comment>Message box title.</comment>
+  </data>
+  <data name="SettingsDuplicateQueueMessage" xml:space="preserve">
+    <value>There is already a queue named "{0}".</value>
+    <comment>Message box text. {0} = queue name.</comment>
+  </data>
+  <data name="SettingsServerGroup" xml:space="preserve">
+    <value>Local server</value>
+    <comment>Group title.</comment>
+  </data>
+  <data name="SettingsPortLabel" xml:space="preserve">
+    <value>Port:</value>
+    <comment>Field label.</comment>
+  </data>
+  <data name="SettingsListening" xml:space="preserve">
+    <value>Listening on http://127.0.0.1:{0}</value>
+    <comment>Status text. {0} = port number.</comment>
+  </data>
+  <data name="SettingsOriginsLabel" xml:space="preserve">
+    <value>Allowed website origins (only these sites may print from a browser):</value>
+    <comment>Field label.</comment>
+  </data>
+  <data name="SettingsAddOrigin" xml:space="preserve">
+    <value>Add</value>
+    <comment>Button.</comment>
+  </data>
+  <data name="SettingsRemoveOrigin" xml:space="preserve">
+    <value>Remove selected</value>
+    <comment>Button.</comment>
+  </data>
+  <data name="SettingsInvalidOriginTitle" xml:space="preserve">
+    <value>Invalid origin</value>
+    <comment>Message box title.</comment>
+  </data>
+  <data name="SettingsInvalidOriginMessage" xml:space="preserve">
+    <value>Enter a full origin such as https://apps.example.gov: scheme and host only, no path.</value>
+    <comment>Message box text.</comment>
+  </data>
+  <data name="SettingsRunAtLogin" xml:space="preserve">
+    <value>Start PrintBridge when I sign in to Windows</value>
+    <comment>Check box.</comment>
+  </data>
+  <data name="SettingsLanguageLabel" xml:space="preserve">
+    <value>Language:</value>
+    <comment>Field label.</comment>
+  </data>
+  <data name="SettingsLanguageAutomatic" xml:space="preserve">
+    <value>Automatic (Windows language)</value>
+    <comment>Language choice that follows Windows.</comment>
+  </data>
+  <data name="SettingsSave" xml:space="preserve">
+    <value>Save</value>
+    <comment>Button.</comment>
+  </data>
+  <data name="SettingsCancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>Button.</comment>
+  </data>
+  <data name="QueueDialogAddTitle" xml:space="preserve">
+    <value>Add print queue</value>
+    <comment>Window title.</comment>
+  </data>
+  <data name="QueueDialogEditTitle" xml:space="preserve">
+    <value>Edit print queue</value>
+    <comment>Window title.</comment>
+  </data>
+  <data name="QueueDialogNameLabel" xml:space="preserve">
+    <value>Queue name:</value>
+    <comment>Field label.</comment>
+  </data>
+  <data name="QueueDialogPrinterLabel" xml:space="preserve">
+    <value>Printer:</value>
+    <comment>Field label.</comment>
+  </data>
+  <data name="QueueDialogHint" xml:space="preserve">
+    <value>Web apps ask for the queue name. They never see the printer name.</value>
+    <comment>Help text.</comment>
+  </data>
+  <data name="QueueDialogOk" xml:space="preserve">
+    <value>OK</value>
+    <comment>Button.</comment>
+  </data>
+  <data name="QueueDialogPrinterListFailed" xml:space="preserve">
+    <value>Could not list printers: {0}</value>
+    <comment>Status text. {0} = error details.</comment>
+  </data>
+  <data name="QueueDialogPrinterMissing" xml:space="preserve">
+    <value>"{0}" is not installed on this PC right now.</value>
+    <comment>Status text. {0} = printer name.</comment>
+  </data>
+  <data name="QueueDialogNoPrinters" xml:space="preserve">
+    <value>No printers are installed on this PC.</value>
+    <comment>Status text.</comment>
+  </data>
+  <data name="QueueDialogInvalidNameTitle" xml:space="preserve">
+    <value>Invalid queue name</value>
+    <comment>Message box title.</comment>
+  </data>
+  <data name="QueueDialogInvalidNameMessage" xml:space="preserve">
+    <value>Use 1–64 letters, digits, dots, underscores or hyphens, starting with a letter or digit.</value>
+    <comment>Message box text.</comment>
+  </data>
+  <data name="QueueDialogNoPrinterTitle" xml:space="preserve">
+    <value>No printer selected</value>
+    <comment>Message box title.</comment>
+  </data>
+  <data name="QueueDialogNoPrinterMessage" xml:space="preserve">
+    <value>Pick the printer this queue should print to.</value>
+    <comment>Message box text.</comment>
+  </data>
+  <data name="ServerPortInUse" xml:space="preserve">
+    <value>Could not listen on port {0}. Another program may be using it.</value>
+    <comment>{0} = port number.</comment>
+  </data>
+  <data name="ServerStartFailed" xml:space="preserve">
+    <value>The local server could not start: {0}</value>
+    <comment>{0} = error details.</comment>
+  </data>
+  <data name="ApiInvalidCopies" xml:space="preserve">
+    <value>copies must be between {0} and {1}.</value>
+    <comment>API error. {0} = minimum, {1} = maximum. Keep "copies" as it is.</comment>
+  </data>
+  <data name="ApiUnknownQueue" xml:space="preserve">
+    <value>There is no print queue named '{0}'.</value>
+    <comment>API error. {0} = queue name.</comment>
+  </data>
+  <data name="ApiNoQueueConfigured" xml:space="preserve">
+    <value>No print queue is configured. Open PrintBridge settings and add one.</value>
+    <comment>API error.</comment>
+  </data>
+  <data name="ApiNotAPdf" xml:space="preserve">
+    <value>The request body is not a PDF document.</value>
+    <comment>API error.</comment>
+  </data>
+  <data name="ApiDocumentTooLarge" xml:space="preserve">
+    <value>The document is larger than the {0} MB limit.</value>
+    <comment>API error. {0} = size limit in megabytes.</comment>
+  </data>
+  <data name="ApiPrintJobNotFound" xml:space="preserve">
+    <value>Unknown print job.</value>
+    <comment>API error.</comment>
+  </data>
+  <data name="PrintCanceled" xml:space="preserve">
+    <value>The print job was canceled.</value>
+    <comment>Print error.</comment>
+  </data>
+  <data name="PrintUnreadablePdf" xml:space="preserve">
+    <value>The document could not be read as a PDF.</value>
+    <comment>Print error.</comment>
+  </data>
+  <data name="PrintEmptyPdf" xml:space="preserve">
+    <value>The PDF contains no pages.</value>
+    <comment>Print error.</comment>
+  </data>
+  <data name="PrintPageRenderFailed" xml:space="preserve">
+    <value>Page {0} of the PDF could not be rendered.</value>
+    <comment>Print error. {0} = page number.</comment>
+  </data>
+  <data name="PrintPrinterUnavailable" xml:space="preserve">
+    <value>The printer for queue '{0}' is not available.</value>
+    <comment>Print error. {0} = queue name.</comment>
+  </data>
+  <data name="PrintWindowsRefused" xml:space="preserve">
+    <value>Windows refused the print job: {0}</value>
+    <comment>Print error. {0} = details from Windows.</comment>
+  </data>
+  <data name="PrintFailed" xml:space="preserve">
+    <value>The print job failed: {0}</value>
+    <comment>Print error. {0} = error details.</comment>
+  </data>
+</root>

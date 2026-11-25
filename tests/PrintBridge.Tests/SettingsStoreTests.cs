@@ -1,3 +1,4 @@
+using PrintBridge.Localization;
 using PrintBridge.Settings;
 using Xunit;
 
@@ -37,6 +38,7 @@ public class SettingsStoreTests : IDisposable
             ],
             DefaultQueue = "labels",
             RunAtLogin = false,
+            Language = "it",
         };
         store.Save(settings);
 
@@ -49,6 +51,27 @@ public class SettingsStoreTests : IDisposable
         Assert.Equal("front-desk", reloaded.Queues[1].Name);
         Assert.Equal("labels", reloaded.DefaultQueue);
         Assert.False(reloaded.RunAtLogin);
+        Assert.Equal("it", reloaded.Language);
+    }
+
+    [Fact]
+    public void NewSettingsFollowTheWindowsLanguage()
+    {
+        Assert.Equal(UiLanguage.Automatic, new AppSettings().Language);
+    }
+
+    [Fact]
+    public void SettingsFileWithoutLanguageKeepsWorking()
+    {
+        // A settings file from version 1.0 has no "language".
+        Directory.CreateDirectory(_tempDir);
+        File.WriteAllText(Path.Combine(_tempDir, "settings.json"), """{ "port": 7300, "defaultQueue": "labels" }""");
+
+        var loaded = new SettingsStore(_tempDir).Load();
+
+        Assert.Equal(7300, loaded.Port);
+        Assert.Equal("labels", loaded.DefaultQueue);
+        Assert.Equal(UiLanguage.Automatic, loaded.Language);
     }
 
     [Fact]

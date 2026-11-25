@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using PrintBridge.Localization;
 
 namespace PrintBridge.Printing;
 
@@ -110,19 +111,19 @@ public sealed class PrintJobManager : IDisposable
         {
             job.Status = PrintJobStatus.Canceled;
             job.ErrorCode = PrintErrorCodes.Canceled;
-            job.ErrorMessage = "The print job was canceled.";
+            job.ErrorMessage = new LocalizedMessage(nameof(Strings.PrintCanceled));
         }
         catch (PrintBridgeException ex)
         {
             job.Status = PrintJobStatus.Failed;
             job.ErrorCode = ex.Code;
-            job.ErrorMessage = ex.Message;
+            job.ErrorMessage = ex.Text;
         }
         catch (Exception ex)
         {
             job.Status = PrintJobStatus.Failed;
             job.ErrorCode = PrintErrorCodes.PrintFailed;
-            job.ErrorMessage = ex.Message;
+            job.ErrorMessage = new LocalizedMessage(nameof(Strings.PrintFailed), ex.Message);
         }
         finally
         {

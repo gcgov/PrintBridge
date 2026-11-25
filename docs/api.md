@@ -41,6 +41,12 @@ Non-2xx responses (except 404s from unknown URLs) use:
 
 Messages name the queue, never the Windows printer.
 
+Program against `code`: its values never change. `message` is text for people. It is in
+the language of the request's `Accept-Language` header when PrintBridge has that
+language (English and Italian today), and in English otherwise. A request without
+`Accept-Language` gets English. Browsers send the user's language automatically, so a
+web page can show `message` as it is. The response carries a `Content-Language` header.
+
 ## Endpoints
 
 ### `GET /api/v1/status`

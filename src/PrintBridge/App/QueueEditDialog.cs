@@ -1,3 +1,4 @@
+using PrintBridge.Localization;
 using PrintBridge.Printing;
 using PrintBridge.Settings;
 
@@ -15,7 +16,7 @@ public sealed class QueueEditDialog : Form
 
     public QueueEditDialog(string? queueName, string? printerName)
     {
-        Text = string.IsNullOrEmpty(queueName) ? "Add print queue" : "Edit print queue";
+        Text = string.IsNullOrEmpty(queueName) ? Strings.QueueDialogAddTitle : Strings.QueueDialogEditTitle;
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false;
         MinimizeBox = false;
@@ -40,22 +41,22 @@ public sealed class QueueEditDialog : Form
     private void BuildLayout()
     {
         var layout = new TableLayoutPanel { AutoSize = true, ColumnCount = 2, Dock = DockStyle.Top };
-        layout.Controls.Add(new Label { Text = "Queue name:", AutoSize = true, Anchor = AnchorStyles.Left }, 0, 0);
+        layout.Controls.Add(new Label { Text = Strings.QueueDialogNameLabel, AutoSize = true, Anchor = AnchorStyles.Left }, 0, 0);
         layout.Controls.Add(_nameInput, 1, 0);
-        layout.Controls.Add(new Label { Text = "Printer:", AutoSize = true, Anchor = AnchorStyles.Left }, 0, 1);
+        layout.Controls.Add(new Label { Text = Strings.QueueDialogPrinterLabel, AutoSize = true, Anchor = AnchorStyles.Left }, 0, 1);
         layout.Controls.Add(_printerCombo, 1, 1);
         layout.Controls.Add(_printerStatusLabel, 1, 2);
         var hint = new Label
         {
-            Text = "Web apps ask for the queue name; they never see the printer name.",
+            Text = Strings.QueueDialogHint,
             AutoSize = true,
             ForeColor = SystemColors.GrayText,
             Anchor = AnchorStyles.Left,
         };
         layout.Controls.Add(hint, 1, 3);
 
-        var okButton = new Button { Text = "OK", AutoSize = true };
-        var cancelButton = new Button { Text = "Cancel", AutoSize = true, DialogResult = DialogResult.Cancel };
+        var okButton = new Button { Text = Strings.QueueDialogOk, AutoSize = true };
+        var cancelButton = new Button { Text = Strings.SettingsCancel, AutoSize = true, DialogResult = DialogResult.Cancel };
         okButton.Click += (_, _) => Confirm();
         AcceptButton = okButton;
         CancelButton = cancelButton;
@@ -88,7 +89,7 @@ public sealed class QueueEditDialog : Form
         catch (Exception ex)
         {
             printers = [];
-            _printerStatusLabel.Text = $"Could not list printers: {ex.Message}";
+            _printerStatusLabel.Text = Strings.QueueDialogPrinterListFailed(ex.Message);
         }
 
         // A queue may point at a printer that has since been removed; keep it selectable
@@ -97,7 +98,7 @@ public sealed class QueueEditDialog : Form
             !printers.Any(p => string.Equals(p, selected, StringComparison.OrdinalIgnoreCase)))
         {
             printers.Insert(0, selected);
-            _printerStatusLabel.Text = $"\"{selected}\" is not installed on this PC right now.";
+            _printerStatusLabel.Text = Strings.QueueDialogPrinterMissing(selected);
         }
 
         _printerCombo.Items.AddRange([.. printers.Cast<object>()]);
@@ -114,7 +115,7 @@ public sealed class QueueEditDialog : Form
 
         if (printers.Count == 0 && string.IsNullOrEmpty(_printerStatusLabel.Text))
         {
-            _printerStatusLabel.Text = "No printers are installed on this PC.";
+            _printerStatusLabel.Text = Strings.QueueDialogNoPrinters;
         }
     }
 
@@ -123,15 +124,15 @@ public sealed class QueueEditDialog : Form
         if (!AppSettings.TryNormalizeQueueName(_nameInput.Text, out var normalized))
         {
             MessageBox.Show(this,
-                "Use 1–64 letters, digits, dots, underscores or hyphens, starting with a letter or digit.",
-                "Invalid queue name", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Strings.QueueDialogInvalidNameMessage,
+                Strings.QueueDialogInvalidNameTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
         if (_printerCombo.SelectedItem is not string printer || string.IsNullOrWhiteSpace(printer))
         {
-            MessageBox.Show(this, "Pick the printer this queue should print to.",
-                "No printer selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(this, Strings.QueueDialogNoPrinterMessage,
+                Strings.QueueDialogNoPrinterTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 

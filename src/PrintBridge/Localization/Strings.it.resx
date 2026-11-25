@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NotListening" xml:space="preserve">
+    <value>Non in ascolto</value>
+  </data>
+  <data name="OpenLogFolder" xml:space="preserve">
+    <value>Apri cartella dei log</value>
+  </data>
+  <data name="TrayMenuSettings" xml:space="preserve">
+    <value>Impostazioni…</value>
+  </data>
+  <data name="TrayMenuTestPage" xml:space="preserve">
+    <value>Stampa pagina di prova</value>
+  </data>
+  <data name="TrayMenuExit" xml:space="preserve">
+    <value>Esci</value>
+  </data>
+  <data name="TrayNoQueueConfigured" xml:space="preserve">
+    <value>Nessuna coda di stampa configurata: apri prima le Impostazioni.</value>
+  </data>
+  <data name="TrayTestPageUnreadable" xml:space="preserve">
+    <value>Impossibile leggere la pagina di prova: {0}</value>
+  </data>
+  <data name="TrayTestPageSent" xml:space="preserve">
+    <value>Pagina di prova inviata a "{0}".</value>
+  </data>
+  <data name="TrayPrintFailedTitle" xml:space="preserve">
+    <value>PrintBridge: stampa non riuscita</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>PrintBridge - Impostazioni</value>
+  </data>
+  <data name="SettingsQueuesGroup" xml:space="preserve">
+    <value>Code di stampa</value>
+  </data>
+  <data name="SettingsQueuesHint" xml:space="preserve">
+    <value>Le applicazioni web chiedono una coda per nome. Non vedono mai la stampante associata.</value>
+  </data>
+  <data name="SettingsQueueColumn" xml:space="preserve">
+    <value>Coda</value>
+  </data>
+  <data name="SettingsPrinterColumn" xml:space="preserve">
+    <value>Stampante</value>
+  </data>
+  <data name="SettingsDefaultColumn" xml:space="preserve">
+    <value>Predefinita</value>
+  </data>
+  <data name="SettingsDefaultYes" xml:space="preserve">
+    <value>Sì</value>
+  </data>
+  <data name="SettingsAddQueue" xml:space="preserve">
+    <value>Aggiungi…</value>
+  </data>
+  <data name="SettingsEditQueue" xml:space="preserve">
+    <value>Modifica…</value>
+  </data>
+  <data name="SettingsRemoveQueue" xml:space="preserve">
+    <value>Rimuovi</value>
+  </data>
+  <data name="SettingsSetDefaultQueue" xml:space="preserve">
+    <value>Imposta come predefinita</value>
+  </data>
+  <data name="SettingsDuplicateQueueTitle" xml:space="preserve">
+    <value>Nome della coda duplicato</value>
+  </data>
+  <data name="SettingsDuplicateQueueMessage" xml:space="preserve">
+    <value>Esiste già una coda chiamata "{0}".</value>
+  </data>
+  <data name="SettingsServerGroup" xml:space="preserve">
+    <value>Server locale</value>
+  </data>
+  <data name="SettingsPortLabel" xml:space="preserve">
+    <value>Porta:</value>
+  </data>
+  <data name="SettingsListening" xml:space="preserve">
+    <value>In ascolto su http://127.0.0.1:{0}</value>
+  </data>
+  <data name="SettingsOriginsLabel" xml:space="preserve">
+    <value>Siti autorizzati (solo questi siti possono stampare dal browser):</value>
+  </data>
+  <data name="SettingsAddOrigin" xml:space="preserve">
+    <value>Aggiungi</value>
+  </data>
+  <data name="SettingsRemoveOrigin" xml:space="preserve">
+    <value>Rimuovi selezionata</value>
+  </data>
+  <data name="SettingsInvalidOriginTitle" xml:space="preserve">
+    <value>Origine non valida</value>
+  </data>
+  <data name="SettingsInvalidOriginMessage" xml:space="preserve">
+    <value>Inserisci un'origine completa, ad esempio https://apps.example.gov: solo protocollo e dominio, senza percorso.</value>
+  </data>
+  <data name="SettingsRunAtLogin" xml:space="preserve">
+    <value>Avvia PrintBridge all'accesso a Windows</value>
+  </data>
+  <data name="SettingsLanguageLabel" xml:space="preserve">
+    <value>Lingua:</value>
+  </data>
+  <data name="SettingsLanguageAutomatic" xml:space="preserve">
+    <value>Automatica (lingua di Windows)</value>
+  </data>
+  <data name="SettingsSave" xml:space="preserve">
+    <value>Salva</value>
+  </data>
+  <data name="SettingsCancel" xml:space="preserve">
+    <value>Annulla</value>
+  </data>
+  <data name="QueueDialogAddTitle" xml:space="preserve">
+    <value>Aggiungi coda di stampa</value>
+  </data>
+  <data name="QueueDialogEditTitle" xml:space="preserve">
+    <value>Modifica coda di stampa</value>
+  </data>
+  <data name="QueueDialogNameLabel" xml:space="preserve">
+    <value>Nome della coda:</value>
+  </data>
+  <data name="QueueDialogPrinterLabel" xml:space="preserve">
+    <value>Stampante:</value>
+  </data>
+  <data name="QueueDialogHint" xml:space="preserve">
+    <value>Le applicazioni web chiedono il nome della coda. Non vedono mai il nome della stampante.</value>
+  </data>
+  <data name="QueueDialogOk" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="QueueDialogPrinterListFailed" xml:space="preserve">
+    <value>Impossibile elencare le stampanti: {0}</value>
+  </data>
+  <data name="QueueDialogPrinterMissing" xml:space="preserve">
+    <value>"{0}" non è installata su questo PC in questo momento.</value>
+  </data>
+  <data name="QueueDialogNoPrinters" xml:space="preserve">
+    <value>Su questo PC non ci sono stampanti installate.</value>
+  </data>
+  <data name="QueueDialogInvalidNameTitle" xml:space="preserve">
+    <value>Nome della coda non valido</value>
+  </data>
+  <data name="QueueDialogInvalidNameMessage" xml:space="preserve">
+    <value>Usa da 1 a 64 lettere, cifre, punti, trattini bassi o trattini, iniziando con una lettera o una cifra.</value>
+  </data>
+  <data name="QueueDialogNoPrinterTitle" xml:space="preserve">
+    <value>Nessuna stampante selezionata</value>
+  </data>
+  <data name="QueueDialogNoPrinterMessage" xml:space="preserve">
+    <value>Scegli la stampante su cui questa coda deve stampare.</value>
+  </data>
+  <data name="ServerPortInUse" xml:space="preserve">
+    <value>Impossibile mettersi in ascolto sulla porta {0}: potrebbe essere usata da un altro programma.</value>
+  </data>
+  <data name="ServerStartFailed" xml:space="preserve">
+    <value>Impossibile avviare il server locale: {0}</value>
+  </data>
+  <data name="ApiInvalidCopies" xml:space="preserve">
+    <value>copies deve essere compreso tra {0} e {1}.</value>
+  </data>
+  <data name="ApiUnknownQueue" xml:space="preserve">
+    <value>Non esiste una coda di stampa chiamata '{0}'.</value>
+  </data>
+  <data name="ApiNoQueueConfigured" xml:space="preserve">
+    <value>Nessuna coda di stampa configurata. Apri le impostazioni di PrintBridge e aggiungine una.</value>
+  </data>
+  <data name="ApiNotAPdf" xml:space="preserve">
+    <value>Il corpo della richiesta non è un documento PDF.</value>
+  </data>
+  <data name="ApiDocumentTooLarge" xml:space="preserve">
+    <value>Il documento supera il limite di {0} MB.</value>
+  </data>
+  <data name="ApiPrintJobNotFound" xml:space="preserve">
+    <value>Stampa sconosciuta.</value>
+  </data>
+  <data name="PrintCanceled" xml:space="preserve">
+    <value>La stampa è stata annullata.</value>
+  </data>
+  <data name="PrintUnreadablePdf" xml:space="preserve">
+    <value>Il documento non può essere letto come PDF.</value>
+  </data>
+  <data name="PrintEmptyPdf" xml:space="preserve">
+    <value>Il PDF non contiene pagine.</value>
+  </data>
+  <data name="PrintPageRenderFailed" xml:space="preserve">
+    <value>Impossibile elaborare la pagina {0} del PDF.</value>
+  </data>
+  <data name="PrintPrinterUnavailable" xml:space="preserve">
+    <value>La stampante della coda '{0}' non è disponibile.</value>
+  </data>
+  <data name="PrintWindowsRefused" xml:space="preserve">
+    <value>Windows ha rifiutato la stampa: {0}</value>
+  </data>
+  <data name="PrintFailed" xml:space="preserve">
+    <value>La stampa non è riuscita: {0}</value>
+  </data>
+</root>
